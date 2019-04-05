@@ -20,12 +20,12 @@ public class Department extends Contact{
     }
 
     public Response create(String name, String parentId) {
+        reset();
         String body = JsonPath.parse(this.getClass().getResourceAsStream("/data/contact/department/create.json"))
                 .set("$.name", name)
                 .set("$.parentid", parentId)
                 .jsonString();
-        return given().log().all()
-                .queryParam("access_token", Wework.getAccessToken())
+        return requestSpecification
                 .body(body)
                 .contentType("application/json; charset=UTF-8")
                 .when().post("https://qyapi.weixin.qq.com/cgi-bin/department/create")
@@ -35,11 +35,11 @@ public class Department extends Contact{
     }
 
     public Response update(String name, String id) {
+        reset();
         String body = JsonPath.parse(this.getClass().getResourceAsStream("/data/contact/department/update.json"))
                 .set("$.name", name)
                 .set("$.id", id).jsonString();
-        return given().log().all()
-                .queryParam("access_token", Wework.getAccessToken())
+        return requestSpecification
                 .body(body)
                 .when().post("https://qyapi.weixin.qq.com/cgi-bin/department/update")
 
@@ -47,8 +47,8 @@ public class Department extends Contact{
                 ;
     }
     public Response delete(String id) {
-        return given().log().all()
-                .queryParam("access_token", Wework.getAccessToken())
+        reset();
+        return requestSpecification
                 .queryParam("id",id)
                 .when().get("https://qyapi.weixin.qq.com/cgi-bin/department/delete")
 

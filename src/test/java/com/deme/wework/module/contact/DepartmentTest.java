@@ -10,7 +10,6 @@ import static org.junit.jupiter.api.Assertions.*;
 class DepartmentTest {
 
     Department department;
-
     @BeforeEach
     void setup() {
         if (department == null) {
@@ -33,7 +32,7 @@ class DepartmentTest {
 
     @Test
     public void create() {
-        department.create("Sale部门", "1").then().statusCode(200);
+        department.create("Sale"+random(), "1").then().statusCode(200);
     }
 
     @Test
@@ -47,6 +46,9 @@ class DepartmentTest {
     public void update() {
         Object id=department.create("Sale", "1").then().statusCode(200).extract().path("id");
         department.update(id.toString()+"1",id.toString()).then().body("errcode", equalTo(0));
+    }
+    private String random(){
+        return String.valueOf(System.currentTimeMillis());
     }
 
 
