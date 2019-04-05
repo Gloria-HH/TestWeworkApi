@@ -33,25 +33,21 @@ class DepartmentTest {
 
     @Test
     public void create() {
-        department.create("Sale", "1").then().statusCode(200);
+        department.create("Sale部门", "1").then().statusCode(200);
     }
 
     @Test
     public void delete() {
-        department.delete("5").then().statusCode(200);
-    }
-
-    @Test
-    public void createAndUpdate() {
-        Object id=department.create("Sale", "1").then().statusCode(200).extract().path("id");
-        department.update(id.toString()+"1",id.toString()).then().body("errcode", equalTo(0));
-    }
-
-    @Test
-    public void createAndDelete() {
         Object id=department.create("Sale", "1").then().statusCode(200)
                 .body("errcode", equalTo(0)).extract().path("id");
         department.delete(id.toString()).then().body("errcode", equalTo(0));
     }
+
+    @Test
+    public void update() {
+        Object id=department.create("Sale", "1").then().statusCode(200).extract().path("id");
+        department.update(id.toString()+"1",id.toString()).then().body("errcode", equalTo(0));
+    }
+
 
 }

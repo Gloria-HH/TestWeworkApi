@@ -6,13 +6,12 @@ import io.restassured.response.Response;
 
 
 import static io.restassured.RestAssured.given;
+import static io.restassured.RestAssured.requestSpecification;
 
-public class Department {
+public class Department extends Contact{
 
     public Response list(String id) {
-        return given().log().all()
-                .queryParam("access_token", Wework.getAccessToken())
-                .queryParam("id", id)
+        return requestSpecification.queryParam("id", id)
 
                 .when().get("https://qyapi.weixin.qq.com/cgi-bin/department/list")
 
@@ -21,13 +20,14 @@ public class Department {
     }
 
     public Response create(String name, String parentId) {
-        String body = JsonPath.parse(this.getClass().getResourceAsStream("/data/contact/createDepartment.json"))
+        String body = JsonPath.parse(this.getClass().getResourceAsStream("/data/contact/department/create.json"))
                 .set("$.name", name)
                 .set("$.parentid", parentId)
                 .jsonString();
         return given().log().all()
                 .queryParam("access_token", Wework.getAccessToken())
                 .body(body)
+                .contentType("application/json; charset=UTF-8")
                 .when().post("https://qyapi.weixin.qq.com/cgi-bin/department/create")
 
                 .then().log().all().statusCode(200).extract().response()
@@ -35,7 +35,7 @@ public class Department {
     }
 
     public Response update(String name, String id) {
-        String body = JsonPath.parse(this.getClass().getResourceAsStream("/data/contact/updateDepartment.json"))
+        String body = JsonPath.parse(this.getClass().getResourceAsStream("/data/contact/department/update.json"))
                 .set("$.name", name)
                 .set("$.id", id).jsonString();
         return given().log().all()
