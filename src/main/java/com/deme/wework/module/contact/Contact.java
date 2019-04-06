@@ -9,9 +9,9 @@ import static io.restassured.RestAssured.given;
 public class Contact extends Restful {
 
     public Contact() {
-        reset();
     }
 
+    @Override
     public void reset() {
         requestSpecification = given().log().all()
                 .contentType(WeworkConstants.CONTENT_TYPE_JSON)
