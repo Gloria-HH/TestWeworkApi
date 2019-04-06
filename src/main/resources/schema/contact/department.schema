@@ -1,0 +1,88 @@
+{
+  "definitions": {},
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "http://example.com/root.json",
+  "type": "object",
+  "title": "The Root Schema",
+  "required": [
+    "errcode",
+    "errmsg",
+    "department"
+  ],
+  "properties": {
+    "errcode": {
+      "$id": "#/properties/errcode",
+      "type": "integer",
+      "title": "The Errcode Schema",
+      "default": 0,
+      "examples": [
+        0
+      ]
+    },
+    "errmsg": {
+      "$id": "#/properties/errmsg",
+      "type": "string",
+      "title": "The Errmsg Schema",
+      "default": "",
+      "examples": [
+        "ok"
+      ],
+      "pattern": "^(.*)$"
+    },
+    "department": {
+      "$id": "#/properties/department",
+      "type": "array",
+      "title": "The Department Schema",
+      "items": {
+        "$id": "#/properties/department/items",
+        "type": "object",
+        "title": "The Items Schema",
+        "required": [
+          "id",
+          "name",
+          "parentid",
+          "order"
+        ],
+        "properties": {
+          "id": {
+            "$id": "#/properties/department/items/properties/id",
+            "type": "integer",
+            "title": "The Id Schema",
+            "default": 0,
+            "examples": [
+              1
+            ]
+          },
+          "name": {
+            "$id": "#/properties/department/items/properties/name",
+            "type": "string",
+            "title": "The Name Schema",
+            "default": "",
+            "examples": [
+              "宇宙时空"
+            ],
+            "pattern": "^(.*)$"
+          },
+          "parentid": {
+            "$id": "#/properties/department/items/properties/parentid",
+            "type": "integer",
+            "title": "The Parentid Schema",
+            "default": 0,
+            "examples": [
+              0
+            ]
+          },
+          "order": {
+            "$id": "#/properties/department/items/properties/order",
+            "type": "integer",
+            "title": "The Order Schema",
+            "default": 0,
+            "examples": [
+              100000000
+            ]
+          }
+        }
+      }
+    }
+  }
+}

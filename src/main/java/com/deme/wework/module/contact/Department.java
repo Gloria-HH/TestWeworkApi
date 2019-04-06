@@ -11,8 +11,6 @@ public class Department extends Contact {
     public Response list(Map<String, Object> map) {
         return getResponseFromQueryParam(map, "https://qyapi.weixin.qq.com/cgi-bin/department/list");
     }
-
-
     public Response create(Map<String, Object> map) {
         return getResponseFromJson("/data/contact/department/create.json",
                 map, "https://qyapi.weixin.qq.com/cgi-bin/department/create", "post");
