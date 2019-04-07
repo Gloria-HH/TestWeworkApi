@@ -1,12 +1,12 @@
 package com.deme.wework.module.contact;
 
-import com.deme.wework.module.common.Restful;
+import com.deme.wework.module.common.API;
 import com.deme.wework.module.common.Wework;
 import com.deme.wework.utils.WeworkConstants;
 
 import static io.restassured.RestAssured.given;
 
-public class Contact extends Restful {
+public class Contact extends API {
 
     public Contact() {
     }
@@ -17,6 +17,10 @@ public class Contact extends Restful {
                 .contentType(WeworkConstants.CONTENT_TYPE_JSON)
                 .queryParam("access_token", Wework.getAccessToken())
                 ;
+        requestSpecification.filter( (req, res, ctx)->{
+            //todo: 对请求 响应做封装
+            return ctx.next(req, res);
+        });
     }
 
 }

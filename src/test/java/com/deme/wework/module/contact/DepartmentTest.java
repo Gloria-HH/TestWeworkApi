@@ -68,7 +68,7 @@ class DepartmentTest {
             put("parentid", "1");
         }};
 
-        department.create(map).then().statusCode(200);
+        department.create(map).then().statusCode(200).body("errcode", equalTo(0));
     }
 
     @Test

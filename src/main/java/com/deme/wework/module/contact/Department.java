@@ -9,11 +9,13 @@ import java.util.Map;
 public class Department extends Contact {
 
     public Response list(Map<String, Object> map) {
-        return getResponseFromQueryParam(map, "https://qyapi.weixin.qq.com/cgi-bin/department/list");
+//        return getResponseFromQueryParam(map, "https://qyapi.weixin.qq.com/cgi-bin/department/list");
+        return getResponseFromYaml("/api/department/list.yaml",map);
     }
     public Response create(Map<String, Object> map) {
-        return getResponseFromJson("/data/contact/department/create.json",
-                map, "https://qyapi.weixin.qq.com/cgi-bin/department/create", "post");
+        return getResponseFromYaml("/api/department/create.yaml",map,"/data/contact/department/create.json");
+//        return getResponseFromJson("/data/contact/department/create.json",
+//                map, "https://qyapi.weixin.qq.com/cgi-bin/department/create", "post");
     }
 
     public Response update(Map<String, Object> map) {
