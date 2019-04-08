@@ -1,6 +1,5 @@
 package com.deme.wework.module.common;
 
-import com.deme.wework.utils.StringUtil;
 import com.deme.wework.utils.WeworkConstants;
 import com.deme.wework.utils.YamlUtils;
 import com.jayway.jsonpath.DocumentContext;
@@ -11,7 +10,6 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.util.Map;
 
-import static io.restassured.RestAssured.basePath;
 import static io.restassured.RestAssured.given;
 
 public class API {
@@ -20,23 +18,6 @@ public class API {
 
     public void reset() {
         requestSpecification = given();
-    }
-
-
-    /**
-     * 发送数据
-     *
-     * @param body
-     * @param url
-     * @param method
-     * @return
-     */
-    public Response sendByJson(String body, String url, String method) {
-        return requestSpecification
-                .body(body)
-                .contentType(WeworkConstants.CONTENT_TYPE_JSON)
-                .when().request(method, url)
-                .then().log().all().statusCode(200).extract().response();
     }
 
 
@@ -68,8 +49,25 @@ public class API {
      */
     public Response getResponseFromJson(String jsonPath, Map<String, Object> requestMap, String url, String method) {
         reset();
-        String body = templateFromJson(jsonPath, requestMap);
-        return sendByJson(body, url, method);
+        Request request = getRestfulFromParam(url, method, requestMap, jsonPath);
+        return send(request);
+    }
+
+    private Request getRestfulFromParam(String url, String method, Map<String, Object> map, String dataJsonPath) {
+        Request request = new Request(url, method);
+        settingQueryParam(map, request);
+        if (StringUtils.isNotBlank(dataJsonPath)) {
+            request.body = templateFromJson(dataJsonPath, map);
+        }
+        return request;
+    }
+
+    private void settingQueryParam(Map<String, Object> map, Request request) {
+        if (WeworkConstants.METHOD_GET.equals(request.method)) {
+            map.entrySet().forEach(entry -> {
+                request.query.replace(entry.getKey(), entry.getValue().toString());
+            });
+        }
     }
 
     /**
@@ -96,54 +94,57 @@ public class API {
      * @return
      */
     public Response getResponseFromYaml(String path, Map<String, Object> map) {
-        reset();
-        Restful restful = getRestfulFromYaml(path, map,"");
-        return sendByRestful(restful);
+        return getResponseFromYaml(path, map, "");
     }
 
     /**
      * 使用yaml转数组发送请求
      *
+     * @param path         request content(url,method)
+     * @param map          queryParam
+     * @param dataJsonPath request body file
      * @return
      */
     public Response getResponseFromYaml(String path, Map<String, Object> map, String dataJsonPath) {
         reset();
-        Restful restful = getRestfulFromYaml(path, map, dataJsonPath);
-        return sendByRestful(restful);
+        Request request = getRestfulFromYaml(path, map, dataJsonPath);
+        return send(request);
     }
 
-    private Restful getRestfulFromYaml(String path, Map<String, Object> map, String dataJsonPath) {
-        Restful restful = YamlUtils.getApiFromYaml(path, Restful.class);
-        if (WeworkConstants.METHOD_GET.equals(restful.method)) {
-            map.entrySet().forEach(entry -> {
-                restful.query.replace(entry.getKey(),entry.getValue().toString());
-            });
-        }
+    private Request getRestfulFromYaml(String path, Map<String, Object> map, String dataJsonPath) {
+        Request request = YamlUtils.getApiFromYaml(path, Request.class);
+        settingQueryParam(map, request);
         if (StringUtils.isNotBlank(dataJsonPath)) {
-            restful.body = templateFromJson(dataJsonPath, map);
+            request.body = templateFromJson(dataJsonPath, map);
         }
-        return restful;
+        return request;
     }
 
-    private Response sendByRestful(Restful restful) {
-        if (restful.headers != null && !restful.headers.isEmpty()) {
-            restful.headers.entrySet().forEach(entry -> {
+    /**
+     * 发送请求
+     *
+     * @param request
+     * @return
+     */
+    private Response send(Request request) {
+        if (request.headers != null && !request.headers.isEmpty()) {
+            request.headers.entrySet().forEach(entry -> {
                 requestSpecification.head(entry.getKey(), entry.getValue());
             });
 
         }
-        if (restful.query != null) {
-            restful.query.entrySet().forEach(entry -> {
+        if (request.query != null) {
+            request.query.entrySet().forEach(entry -> {
                 requestSpecification.queryParam(entry.getKey(), entry.getValue());
             });
         }
-        if(StringUtils.isNotBlank(restful.body)){
-            requestSpecification.body(restful.body);
+        if (StringUtils.isNotBlank(request.body)) {
+            requestSpecification.body(request.body);
         }
 
         return requestSpecification
                 .contentType(WeworkConstants.CONTENT_TYPE_JSON)
-                .when().request(restful.method, restful.url)
+                .when().request(request.method, request.url)
                 .then().log().all().statusCode(200).extract().response();
     }
 
