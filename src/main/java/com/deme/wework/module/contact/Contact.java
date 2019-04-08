@@ -15,7 +15,7 @@ public class Contact extends API {
     public void reset() {
         requestSpecification = given().log().all()
                 .contentType(WeworkConstants.CONTENT_TYPE_JSON)
-                .queryParam("access_token", Wework.getAccessToken())
+                .queryParam("access_token", Wework.getAccessToken("contact"))
                 ;
         requestSpecification.filter( (req, res, ctx)->{
             //todo: 对请求 响应做封装

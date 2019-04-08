@@ -14,7 +14,7 @@ public class Wework {
 
     static String getWeworkAccessToken(String secret) {
         return given()
-                .queryParam("corpid", config.corpId)
+                .queryParam("corpid", config.getCorpId())
                 .queryParam("corpsecret", secret)
 
                 .when().get(" https://qyapi.weixin.qq.com/cgi-bin/gettoken")
@@ -26,9 +26,10 @@ public class Wework {
 
     }
 
-    public static String getAccessToken() {
+    public static String getAccessToken(String type) {
+
         if (StringUtils.isBlank(ACCESS_TOKEN)) {
-            ACCESS_TOKEN = getWeworkAccessToken(config.contactSecret);
+            ACCESS_TOKEN = getWeworkAccessToken(config.getSecret().get(type));
         }
         return ACCESS_TOKEN;
     }

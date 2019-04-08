@@ -9,6 +9,6 @@ class WeworkConfigTest {
     @Test
     void load() {
         WeworkConfig config=WeworkConfig.getInstance();
-        System.out.println(config.corpId);
+        System.out.println(config.getCorpId());
     }
 }

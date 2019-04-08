@@ -1,17 +1,15 @@
 package com.deme.wework.module.common;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+import com.deme.wework.utils.YamlUtils;
 
-import java.io.IOException;
+import java.util.Map;
 
 public class WeworkConfig {
 
-    public String corpId;
+    private String corpId;
 
-    public String corpSecret ;
+    private Map<String,String> secret;
 
-    public String contactSecret;
 
     private static WeworkConfig weworkConfig;
 
@@ -25,23 +23,16 @@ public class WeworkConfig {
 
 
     public static WeworkConfig load(String path) {
-        ObjectMapper objectMapper = new ObjectMapper(new YAMLFactory());
-        WeworkConfig config;
-        try {
-            config = objectMapper.readValue(WeworkConfig.class.getResourceAsStream(path), WeworkConfig.class);
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
-        }
+        WeworkConfig config=YamlUtils.getApiFromYaml(path,WeworkConfig.class);
         return config;
-
-       /* ObjectMapper objectMapper = new ObjectMapper(new JsonFactory());
-        try {
-            System.out.println(objectMapper.writeValueAsString(WeworkConfig.getInstance()));
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-        }*/
     }
 
+    public String getCorpId() {
+        return corpId;
+    }
+
+    public Map<String, String> getSecret() {
+        return secret;
+    }
 
 }

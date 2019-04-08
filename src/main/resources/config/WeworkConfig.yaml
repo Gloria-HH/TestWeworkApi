@@ -1,3 +1,4 @@
-corpId: "xx"
-corpSecret: "xx"
-contactSecret: "xx"
+corpId: XX
+secret:
+  corp: XX
+  contact: XX

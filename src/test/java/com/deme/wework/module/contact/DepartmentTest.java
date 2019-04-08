@@ -36,18 +36,6 @@ class DepartmentTest {
 
     }
 
-    @Test
-    public void listUsingFilter() {
-        given().filter((req, res, ctx) -> {
-            System.out.println(req.getBasePath());
-
-            Response resNew = ctx.next(req, res);
-            System.out.println(resNew.getStatusCode());
-            return resNew;
-        }).queryParam("access_token", Wework.getAccessToken())
-        .when().get("https://qyapi.weixin.qq.com/cgi-bin/department/list")
-        .then();
-    }
 
 
     @Test
