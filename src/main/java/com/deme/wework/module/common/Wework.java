@@ -10,10 +10,11 @@ import static org.hamcrest.Matchers.equalTo;
 public class Wework {
 
     private static String ACCESS_TOKEN;
+    private final static WeworkConfig config = WeworkConfig.getInstance();
 
     static String getWeworkAccessToken(String secret) {
         return given()
-                .queryParam("corpid", WeworkConstants.CORP_ID)
+                .queryParam("corpid", config.corpId)
                 .queryParam("corpsecret", secret)
 
                 .when().get(" https://qyapi.weixin.qq.com/cgi-bin/gettoken")
@@ -27,7 +28,7 @@ public class Wework {
 
     public static String getAccessToken() {
         if (StringUtils.isBlank(ACCESS_TOKEN)) {
-            ACCESS_TOKEN = getWeworkAccessToken(WeworkConstants.CONTACT_SECRET);
+            ACCESS_TOKEN = getWeworkAccessToken(config.contactSecret);
         }
         return ACCESS_TOKEN;
     }

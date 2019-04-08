@@ -56,16 +56,14 @@ public class API {
     private Request getRestfulFromParam(String url, String method, Map<String, Object> map, String dataJsonPath) {
         Request request = new Request(url, method);
         settingQueryParam(map, request);
-        if (StringUtils.isNotBlank(dataJsonPath)) {
-            request.body = templateFromJson(dataJsonPath, map);
-        }
+        getBodyFromTemplate(map, dataJsonPath, request);
         return request;
     }
 
     private void settingQueryParam(Map<String, Object> map, Request request) {
-        if (WeworkConstants.METHOD_GET.equals(request.method)) {
+        if (WeworkConstants.METHOD_GET.equals(request.getMethod())) {
             map.entrySet().forEach(entry -> {
-                request.query.replace(entry.getKey(), entry.getValue().toString());
+                request.getQuery().replace(entry.getKey(), entry.getValue().toString());
             });
         }
     }
@@ -114,10 +112,14 @@ public class API {
     private Request getRestfulFromYaml(String path, Map<String, Object> map, String dataJsonPath) {
         Request request = YamlUtils.getApiFromYaml(path, Request.class);
         settingQueryParam(map, request);
-        if (StringUtils.isNotBlank(dataJsonPath)) {
-            request.body = templateFromJson(dataJsonPath, map);
-        }
+        getBodyFromTemplate(map, dataJsonPath, request);
         return request;
+    }
+
+    private void getBodyFromTemplate(Map<String, Object> map, String dataJsonPath, Request request) {
+        if (StringUtils.isNotBlank(dataJsonPath)) {
+            request.setBody(templateFromJson(dataJsonPath, map));
+        }
     }
 
     /**
@@ -127,24 +129,24 @@ public class API {
      * @return
      */
     private Response send(Request request) {
-        if (request.headers != null && !request.headers.isEmpty()) {
-            request.headers.entrySet().forEach(entry -> {
+        if (request.getHeaders() != null && !request.getHeaders().isEmpty()) {
+            request.getHeaders().entrySet().forEach(entry -> {
                 requestSpecification.head(entry.getKey(), entry.getValue());
             });
 
         }
-        if (request.query != null) {
-            request.query.entrySet().forEach(entry -> {
+        if (request.getBody() != null) {
+            request.getQuery().entrySet().forEach(entry -> {
                 requestSpecification.queryParam(entry.getKey(), entry.getValue());
             });
         }
-        if (StringUtils.isNotBlank(request.body)) {
-            requestSpecification.body(request.body);
+        if (StringUtils.isNotBlank(request.getBody())) {
+            requestSpecification.body(request.getBody());
         }
 
         return requestSpecification
                 .contentType(WeworkConstants.CONTENT_TYPE_JSON)
-                .when().request(request.method, request.url)
+                .when().request(request.getMethod(), request.getUrl())
                 .then().log().all().statusCode(200).extract().response();
     }
 
