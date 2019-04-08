@@ -4,10 +4,15 @@ import com.deme.wework.utils.WeworkConstants;
 import com.deme.wework.utils.YamlUtils;
 import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.JsonPath;
+import de.sstoehr.harreader.HarReader;
+import de.sstoehr.harreader.HarReaderException;
+import de.sstoehr.harreader.model.Har;
+import de.sstoehr.harreader.model.HarEntry;
 import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
 import org.apache.commons.lang3.StringUtils;
 
+import java.io.File;
 import java.util.Map;
 
 import static io.restassured.RestAssured.given;
@@ -98,7 +103,7 @@ public class API {
     /**
      * 使用yaml转数组发送请求
      *
-     * @param path         request content(url,method)
+     * @param path         yaml路径
      * @param map          queryParam
      * @param dataJsonPath request body file
      * @return
@@ -148,6 +153,47 @@ public class API {
                 .contentType(WeworkConstants.CONTENT_TYPE_JSON)
                 .when().request(request.getMethod(), request.getUrl())
                 .then().log().all().statusCode(200).extract().response();
+    }
+
+    /**
+     * 使用har转数组发送请求
+     *
+     * @param path    har路径
+     * @param map     queryParam
+     * @param pattern 匹配
+     * @return
+     */
+    public Response getResponseFromHar(String path, Map<String, Object> map, String pattern) {
+        reset();
+        Request request = getRestfulFromHar(path, map, pattern);
+        return send(request);
+    }
+
+    public Request getRestfulFromHar(String path, Map<String, Object> map, String pattern) {
+        HarReader harReader = new HarReader();
+        Har har = null;
+        try {
+            har = harReader.readFromFile(new File(getClass().getResource(path).getFile()));
+        } catch (HarReaderException e) {
+            e.printStackTrace();
+        }
+        if (har == null) {
+            return null;
+        }
+        HarEntry harEntry = null;
+        for (HarEntry entry : har.getLog().getEntries()) {
+            if (entry.getRequest().getUrl().matches(pattern)) {
+                harEntry = entry;
+                break;
+            }
+        }
+        if (harEntry == null) {
+            throw new RuntimeException("harEntry is null");
+        }
+        //todo url的queryparam
+        Request request = new Request(harEntry.getRequest().getUrl(), harEntry.getRequest().getMethod().name());
+        request.setBody(harEntry.getRequest().getPostData().getText());
+        return request;
     }
 
 

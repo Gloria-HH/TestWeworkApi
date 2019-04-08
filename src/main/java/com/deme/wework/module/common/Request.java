@@ -57,4 +57,15 @@ public class Request {
     public void setBody(String body) {
         this.body = body;
     }
+
+    @Override
+    public String toString() {
+        return "Request{" +
+                "url='" + url + '\'' +
+                ", method='" + method + '\'' +
+                ", headers=" + headers +
+                ", query=" + query +
+                ", body='" + body + '\'' +
+                '}';
+    }
 }
