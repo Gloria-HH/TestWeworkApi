@@ -1,6 +1,5 @@
 package com.deme.wework.module.contact;
 
-import com.deme.wework.module.common.Wework;
 import com.deme.wework.utils.StringUtil;
 import io.restassured.response.Response;
 import org.junit.jupiter.api.BeforeEach;
@@ -9,7 +8,6 @@ import org.junit.jupiter.api.Test;
 import java.util.HashMap;
 import java.util.Map;
 
-import static io.restassured.RestAssured.given;
 import static io.restassured.module.jsv.JsonSchemaValidator.matchesJsonSchemaInClasspath;
 import static org.hamcrest.core.IsEqual.equalTo;
 

@@ -8,7 +8,7 @@ class WeworkConfigTest {
 
     @Test
     void load() {
-        WeworkConfig config=WeworkConfig.getInstance();
-        System.out.println(config.getCorpId());
+        WeworkConfig config = WeworkConfig.getInstance();
+        assertNotNull(config.getCorpId());
     }
 }
